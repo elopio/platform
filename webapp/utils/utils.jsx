@@ -540,6 +540,7 @@ export function applyTheme(theme) {
     if (theme.mentionColor) {
         changeCss('.sidebar--left .nav-pills__unread-indicator', 'color:' + theme.mentionColor, 2);
         changeCss('.sidebar--left .badge', 'color:' + theme.mentionColor + '!important;', 2);
+        changeCss('.app__body .post-reaction--current-user', 'background-color:' + changeOpacity(theme.mentionColor, 0.4), 1);
     }
 
     if (theme.centerChannelBg) {
@@ -628,8 +629,8 @@ export function applyTheme(theme) {
         changeCss('.app__body .post.post--comment.current--user .post__body', 'border-color:' + changeOpacity(theme.centerChannelColor, 0.2), 1);
         changeCss('.app__body .channel-header__info .status .offline--icon', 'fill:' + theme.centerChannelColor, 1);
         changeCss('.app__body .navbar .status .offline--icon', 'fill:' + theme.centerChannelColor, 1);
+        changeCss('.app__body .post-reaction:not(.post-reaction--current-user)', 'background-color:' + changeOpacity(theme.centerChannelColor, 0.2), 2);
         changeCss('.app__body .post-reaction', 'border-color:' + theme.centerChannelColor, 1);
-        changeCss('.app__body .post-reaction', 'color:' + theme.centerChannelColor, 2);
     }
 
     if (theme.newMessageSeparator) {
