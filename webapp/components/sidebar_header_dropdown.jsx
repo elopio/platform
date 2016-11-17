@@ -54,8 +54,8 @@ export default class SidebarHeaderDropdown extends React.Component {
         this.handleClick = this.handleClick.bind(this);
 
         this.state = {
-            teams: TeamStore.getAll(),
             teamMembers: TeamStore.getMyTeamMembers(),
+            teamListings: TeamStore.getTeamListings(),
             showAboutModal: false,
             showDropdown: false,
             showTeamMembersModal: false,
@@ -138,7 +138,6 @@ export default class SidebarHeaderDropdown extends React.Component {
 
     onTeamChange() {
         this.setState({
-            teams: TeamStore.getAll(),
             teamMembers: TeamStore.getMyTeamMembers()
         });
     }
@@ -316,7 +315,8 @@ export default class SidebarHeaderDropdown extends React.Component {
             );
         }
 
-        var teams = [];
+        const teams = [];
+        let moreTeams = false;
 
         if (config.EnableTeamCreation === 'true') {
             teams.push(
@@ -329,6 +329,31 @@ export default class SidebarHeaderDropdown extends React.Component {
                         <FormattedMessage
                             id='navbar_dropdown.create'
                             defaultMessage='Create a New Team'
+                        />
+                    </Link>
+                </li>
+            );
+        }
+
+        const isAlreadyMember = this.state.teamMembers.reduce((result, item) => {
+            result[item.team_id] = null;
+            return result;
+        }, {});
+
+        for (const id in this.state.teamListings) {
+            if (this.state.teamListings.hasOwnProperty(id) && !isAlreadyMember[id]) {
+                moreTeams = true;
+                break;
+            }
+        }
+
+        if (moreTeams) {
+            teams.push(
+                <li key='joinTeam_li'>
+                    <Link to='/select_team'>
+                        <FormattedMessage
+                            id='navbar_dropdown.join'
+                            defaultMessage='Join another team'
                         />
                     </Link>
                 </li>
@@ -348,38 +373,6 @@ export default class SidebarHeaderDropdown extends React.Component {
                 </a>
             </li>
         );
-
-        if (this.state.teamMembers && this.state.teamMembers.length > 1) {
-            teams.push(
-                <li
-                    key='teamDiv'
-                    className='divider'
-                />
-            );
-
-            for (var index in this.state.teamMembers) {
-                if (this.state.teamMembers.hasOwnProperty(index)) {
-                    var teamMember = this.state.teamMembers[index];
-                    var team = this.state.teams[teamMember.team_id];
-
-                    if (team.name !== this.props.teamName) {
-                        teams.push(
-                            <li key={'team_' + team.name}>
-                                <Link
-                                    to={'/' + team.name + '/channels/town-square'}
-                                >
-                                    <FormattedMessage
-                                        id='navbar_dropdown.switchTo'
-                                        defaultMessage='Switch to '
-                                    />
-                                    {team.display_name}
-                                </Link>
-                            </li>
-                        );
-                    }
-                }
-            }
-        }
 
         let helpLink = null;
         if (config.HelpLink) {
